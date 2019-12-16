@@ -4,31 +4,39 @@ namespace :redmine_digest do
   task create_digest: [:environment] do
     puts "#{Time.now} Create digest for all users"
     count=0
-    #send_digests DigestRule.active.daily
-    User.find_each() do |user|
+    User.find_each do |user|
       #puts user.inspect
       puts "rule #{count}"
       t = user.digest_rules.create(
-          name:             'test',
+          name:             'default_digest',
           notify:           DigestRule::DIGEST_ONLY,
-          recurrent:        DigestRule::MONTHLY,
-          project_selector: DigestRule::ALL,
-          event_ids: %w(issue_created project_changed subject_changed assignee_changed status_changed percent_changed version_changed other_attr_changed attachment_added description_changed comment_added),
-          # event_ids: DigestEvent::TYPES
+          recurrent:        DigestRule::DAILY,
+          project_selector: DigestRule::ALL
+       #   event_ids: %w(issue_created project_changed subject_changed assignee_changed status_changed percent_changed version_changed other_attr_changed attachment_added description_changed comment_added),
       )
-
-      # t = DigestRule.new
-      # t.user = user
-      # t.name = "default_digest_1"
-      # t.active =true
-      # t.recurrent = DigestRule::DAILY
-      # t.project_selector = DigestRule::MEMBER
-      # t.event_ids = DigestEvent::TYPES
-      # t.notify = DigestRule::DIGEST_ONLY
-      # t.template = DigestRule::TEMPLATE_SHORT
-      # t.save!
        puts t.inspect
       count=count+1
+    end
+    puts "Created #{count} digest rules"
+  end
+
+  desc 'Populate digest_rule for active users'
+  task populate: [:environment] do
+    puts "#{Time.now} Create digest rule for active users"
+    count=0
+    #User.where( :status => 1).find_each do |user|
+    User.where( "status = 1").find_each do |user|
+      if user.digest_rules.count==0
+        t = user.digest_rules.create(
+            name:             'default_digest',
+            notify:           DigestRule::DIGEST_ONLY,
+            recurrent:        DigestRule::DAILY,
+            project_selector: DigestRule::ALL
+        #   event_ids: %w(issue_created project_changed subject_changed assignee_changed status_changed percent_changed version_changed other_attr_changed attachment_added description_changed comment_added),
+        )
+        puts t.inspect
+        count=count+1
+      end
     end
     puts "Created #{count} digest rules"
   end
