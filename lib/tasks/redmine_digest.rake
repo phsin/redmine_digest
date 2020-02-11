@@ -41,6 +41,22 @@ namespace :redmine_digest do
     puts "Created #{count} digest rules"
   end
 
+  desc 'set mail_notification for active users = only_assigned'
+  # only_my_events / all
+  task convert_only_assigned: [:environment] do
+    puts "#{Time.now} set mail_notification for active users = only_assigned "
+    count=0
+    #User.where( :status => 1).find_each do |user|
+    # status = 1 and
+    User.where( "mail_notification = 'all'").find_each do |user|
+      user.mail_notification = "only_assigned"
+      user.save
+      puts user.inspect
+      count=count+1
+    end
+    puts "Changed #{count} users"
+  end
+
   desc 'Send daily digests by all active rules'
   task send_daily: [:environment] do
     puts "#{Time.now} Send daily digests."
