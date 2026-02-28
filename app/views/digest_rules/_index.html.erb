@@ -53,7 +53,15 @@
 <%= javascript_include_tag 'redmine_digest_unsaved', plugin: 'redmine_digest' %>
 
 <%= javascript_tag do %>
-  $(window).load(function(){
-    warnMyAccountLeavingUnsaved('<%= escape_javascript l(:text_warn_on_leaving_unsaved) %>');
-  });
+  (function () {
+    try {
+      $(window).on('load', function(){
+        if (typeof window.warnMyAccountLeavingUnsaved === 'function') {
+          window.warnMyAccountLeavingUnsaved('<%= escape_javascript l(:text_warn_on_leaving_unsaved) %>');
+        }
+      });
+    } catch (e) {
+      throw e;
+    }
+  })();
 <% end %>
