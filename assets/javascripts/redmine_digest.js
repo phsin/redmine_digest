@@ -1,4 +1,5 @@
 $(document).ready(function () {
+  var select2Jq = (window.jql && window.jql.fn && window.jql.fn.select2) ? window.jql : window.jQuery;
 
   var toggleProjectList = function () {
     var selectedVal = $("#digest_rule_project_selector").val();
@@ -9,15 +10,15 @@ $(document).ready(function () {
     }
   };
 
-  $("#digest_rule_project_selector").select2({
+  select2Jq("#digest_rule_project_selector").select2({
     width: "40%",
     allowClear: false
   }).on("change", toggleProjectList);
 
-  $("#digest_rule_raw_project_ids").select2({
+  select2Jq("#digest_rule_raw_project_ids").select2({
     width: "40%",
     multiple: true,
-    data: $("#digest_rule_raw_project_ids").data("options"),
+    data: select2Jq("#digest_rule_raw_project_ids").data("options"),
     matcher: function (term, text, option) {
       return text.toUpperCase().indexOf(term.toUpperCase()) >= 0;
     }

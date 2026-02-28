@@ -1,2 +1,40 @@
 <%= stylesheet_link_tag 'redmine_digest', plugin: 'redmine_digest' %>
 <%= javascript_include_tag 'redmine_digest', plugin: 'redmine_digest' %>
+<%= javascript_tag <<~JS
+  $(document).ready(function () {
+    var select2Jq = (window.jql && window.jql.fn && window.jql.fn.select2) ? window.jql : window.jQuery;
+
+    if (!(select2Jq && select2Jq.fn && select2Jq.fn.select2)) {
+      return;
+    }
+
+    var toggleProjectList = function () {
+      var selectedVal = $("#digest_rule_project_selector").val();
+      if ($.inArray(selectedVal, ["selected", "not_selected", "member_not_selected"]) < 0) {
+        $("#digest-rule-projects").hide();
+      } else {
+        $("#digest-rule-projects").show();
+      }
+    };
+
+    var projectSelector = select2Jq("#digest_rule_project_selector");
+    if (projectSelector.length > 0 && !projectSelector.data("select2")) {
+      projectSelector.select2({ width: "40%", allowClear: false }).on("change", toggleProjectList);
+    }
+
+    var rawProjectIds = select2Jq("#digest_rule_raw_project_ids");
+    if (rawProjectIds.length > 0 && !rawProjectIds.data("select2")) {
+      rawProjectIds.select2({
+        width: "40%",
+        multiple: true,
+        data: rawProjectIds.data("options"),
+        matcher: function (term, text, option) {
+          return text.toUpperCase().indexOf(term.toUpperCase()) >= 0;
+        }
+      });
+    }
+
+    toggleProjectList();
+  });
+JS
+%>
