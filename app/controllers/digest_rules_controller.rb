@@ -23,7 +23,7 @@ class DigestRulesController < ApplicationController
 
   def update
     @digest_rule = DigestRule.find(params[:id])
-    if @digest_rule.update_attributes(digest_rule_params)
+    if @digest_rule.update(digest_rule_params)
       redirect_to controller: 'my', action: 'account'
     else
       render action: 'edit'
@@ -61,4 +61,5 @@ class DigestRulesController < ApplicationController
       event_ids: []
     )
   end
+
 end
