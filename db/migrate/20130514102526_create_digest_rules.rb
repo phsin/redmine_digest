@@ -1,4 +1,4 @@
-class CreateDigestRules < ActiveRecord::Migration
+class CreateDigestTables < ActiveRecord::Migration[7.0]
   def change
     create_table :digest_rules, force: true do |t|
       t.references :user

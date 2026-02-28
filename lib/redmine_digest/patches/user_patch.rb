@@ -1,3 +1,5 @@
+puts "LOADING PATCH user_patch.rb"
+
 require_dependency 'project'
 require_dependency 'principal'
 require_dependency 'user'
@@ -7,9 +9,15 @@ module RedmineDigest
     module UserPatch
       extend ActiveSupport::Concern
 
-      included do
+#      included do
+#        has_many :digest_rules
+#      end
+
+    def self.included(base)
+      base.class_eval do
         has_many :digest_rules
       end
+    end
 
       def involved_in?(issue)
         issue.author == self ||

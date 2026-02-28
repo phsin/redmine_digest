@@ -1,3 +1,5 @@
+require 'hashie'
+
 class DigestIssue < Hashie::Dash
   property :id, required: true
   property :subject, required: true

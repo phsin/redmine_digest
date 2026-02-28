@@ -23,11 +23,11 @@ class DigestRule < ActiveRecord::Base
 
   belongs_to :user
 
-  serialize :project_ids, Array
+  serialize :project_ids
   serialize :event_ids
 
-  attr_accessible :active, :name, :raw_project_ids, :project_selector,
-                  :notify, :recurrent, :event_ids, :move_to, :template
+#  attr_accessible :active, :name, :raw_project_ids, :project_selector,
+#                  :notify, :recurrent, :event_ids, :move_to, :template
 
   validates :name, presence: true
   validates :project_selector, inclusion: { in: PROJECT_SELECTOR_VALUES }
@@ -50,7 +50,8 @@ class DigestRule < ActiveRecord::Base
   end
 
   def raw_project_ids
-    project_ids.join ','
+    ids = project_ids.to_a
+    ids.join ','
   end
 
   def event_type_enabled?(event_type)
@@ -69,7 +70,8 @@ class DigestRule < ActiveRecord::Base
     Project.
       joins(:memberships).
       where(get_projects_scope).
-      uniq.pluck('projects.id')
+      distinct.pluck(:id).
+      compact
   end
 
   def calculate_time_from(time_to)

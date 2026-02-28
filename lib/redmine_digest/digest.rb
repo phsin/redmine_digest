@@ -172,15 +172,17 @@ module RedmineDigest
     end
 
     def get_changed_issue_ids
-      Journal.joins(:issue).where('issues.project_id in (?)', project_ids).
+      ids = Journal.joins(:issue).where('issues.project_id in (?)', project_ids).
         where('journals.created_on >= ? and journals.created_on < ?', time_from, time_to).
         uniq.pluck(:journalized_id)
+      ids
     end
 
     def get_created_issue_ids
-      Issue.where('issues.project_id in (?)', project_ids).
+      ids = Issue.where('issues.project_id in (?)', project_ids).
         where('issues.created_on >= ? and issues.created_on < ?', time_from, time_to).
         uniq.pluck(:id)
+      ids
     end
 
     def get_issues_scope(issue_ids)

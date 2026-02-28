@@ -18,4 +18,8 @@ Redmine::Plugin.register :redmine_digest do
              require: :loggedin
 end
 
+
+plugin_lib_path = File.expand_path('lib', __dir__)
+$LOAD_PATH.unshift(plugin_lib_path) unless $LOAD_PATH.include?(plugin_lib_path)
+
 require 'redmine_digest'

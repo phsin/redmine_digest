@@ -6,24 +6,25 @@ module RedmineDigest
       extend ActiveSupport::Concern
 
       included do
-        alias_method_chain :recipients, :digest_filter
-        alias_method_chain :watcher_recipients, :digest_filter
+        prepend InstanceMethods
       end
 
-      def recipients_with_digest_filter
-        found_mails = recipients_without_digest_filter
-        found_users = found_mails.map { |mail| User.find_by_mail(mail) }
-        found_users.reject do |found_user|
-          found_user.skip_issue_edit_notify?(self)
-        end.map(&:mail)
-      end
+      module InstanceMethods
+        def recipients
+          found_mails = super
+          found_users = found_mails.map { |mail| User.find_by_mail(mail) }
+          found_users.reject do |found_user|
+            found_user.skip_issue_edit_notify?(self)
+          end.map(&:mail)
+        end
 
-      def watcher_recipients_with_digest_filter
-        found_mails    = watcher_recipients_without_digest_filter
-        found_watchers = found_mails.map { |mail| User.find_by_mail(mail) }
-        found_watchers.reject do |found_watcher|
-          found_watcher.skip_issue_edit_notify?(self)
-        end.map(&:mail)
+        def watcher_recipients
+          found_mails = super
+          found_watchers = found_mails.map { |mail| User.find_by_mail(mail) }
+          found_watchers.reject do |found_watcher|
+            found_watcher.skip_issue_edit_notify?(self)
+          end.map(&:mail)
+        end
       end
     end
   end
