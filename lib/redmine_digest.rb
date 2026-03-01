@@ -7,6 +7,7 @@ require 'active_support/reloader'
 require_dependency 'redmine_digest/patches/project_patch'
 require_dependency 'redmine_digest/patches/user_patch'
 require_dependency 'redmine_digest/patches/my_controller_patch'
+require_dependency 'redmine_digest/patches/users_controller_patch'
 require_dependency 'redmine_digest/patches/issue_patch'
 require_dependency 'redmine_digest/patches/journal_patch'
 require_dependency 'redmine_digest/hooks/my_account_hook'
@@ -22,6 +23,10 @@ def apply_redmine_digest_patches
 
   if defined?(MyController) && !MyController.included_modules.include?(RedmineDigest::Patches::MyControllerPatch)
     MyController.send :include, RedmineDigest::Patches::MyControllerPatch
+  end
+
+  if defined?(UsersController) && !UsersController.included_modules.include?(RedmineDigest::Patches::UsersControllerPatch)
+    UsersController.send :include, RedmineDigest::Patches::UsersControllerPatch
   end
 
   if defined?(Issue) && !Issue.included_modules.include?(RedmineDigest::Patches::IssuePatch)
