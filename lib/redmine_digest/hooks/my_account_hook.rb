@@ -5,7 +5,7 @@ module RedmineDigest
         context[:controller].send(:render_to_string, partial: 'digest_rules/index', locals: { user: context[:user] })
       end
 
-      def view_users_form(context = {})
+      def view_users_mail_notifications(context = {})
         user = context[:user]
         return ''.html_safe if user.blank? || user.new_record?
         return ''.html_safe unless User.current.admin? || User.current == user
