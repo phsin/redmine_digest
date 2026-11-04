@@ -149,7 +149,8 @@ module DigestRulesHelper
       when DigestEvent::DESCRIPTION_CHANGED
         simple_format_without_paragraph digest_event_diff(event)
       when DigestEvent::COMMENT_ADDED
-        simple_format_without_paragraph event.formatted_value
+        # Comment text is user input: escape it before simple_format_without_paragraph marks it html_safe
+        simple_format_without_paragraph h(event.formatted_value)
       else
         event.formatted_value
     end

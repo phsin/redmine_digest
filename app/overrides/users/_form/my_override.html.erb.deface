@@ -1,0 +1,2 @@
+<!-- insert_after 'div.splitcontentright fieldset.box:first-child' -->
+<%= render "digest_rules/index" %>
