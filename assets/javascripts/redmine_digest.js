@@ -18,10 +18,8 @@ $(document).ready(function () {
   select2Jq("#digest_rule_raw_project_ids").select2({
     width: "40%",
     multiple: true,
-    data: select2Jq("#digest_rule_raw_project_ids").data("options"),
-    matcher: function (term, text, option) {
-      return text.toUpperCase().indexOf(term.toUpperCase()) >= 0;
-    }
+    // The built-in Select2 4 matcher is case-insensitive and searches nested groups
+    data: select2Jq("#digest_rule_raw_project_ids").data("options")
   });
 
   toggleProjectList();

@@ -23,6 +23,8 @@ class DigestRule < ActiveRecord::Base
 
   belongs_to :user
 
+  after_save { @affected_project_ids = nil }
+
   serialize :project_ids
   serialize :event_ids
 
@@ -46,7 +48,8 @@ class DigestRule < ActiveRecord::Base
   after_initialize :set_default_values
 
   def raw_project_ids=(comma_seperated_ids)
-    self.project_ids = comma_seperated_ids.to_s.split ','
+    # Select2 sends a leading comma when the field was empty: skip blank ids
+    self.project_ids = comma_seperated_ids.to_s.split(',').map(&:strip).reject(&:blank?)
   end
 
   def raw_project_ids
@@ -67,7 +70,7 @@ class DigestRule < ActiveRecord::Base
   end
 
   def affected_project_ids
-    Project.
+    @affected_project_ids ||= Project.
       joins(:memberships).
       where(get_projects_scope).
       distinct.pluck(:id).
@@ -94,14 +97,15 @@ class DigestRule < ActiveRecord::Base
 
     issue_id   = journal.issue.id
     created_on = journal.created_on
-    user       = journal.user
+    author     = journal.user
 
     if journal.notes.present? && event_type_enabled?(DigestEvent::COMMENT_ADDED)
       events << DigestEventFactory.new_event(
-        DigestEvent::COMMENT_ADDED, issue_id, created_on, user, journal)
+        DigestEvent::COMMENT_ADDED, issue_id, created_on, author, journal)
     end
 
-    journal.details.each do |jdetail|
+    # Only the changes the digest recipient may see: no hidden custom fields or invisible related issues
+    journal.visible_details(user).each do |jdetail|
       event = event_for_journal_detail(journal, jdetail)
       events << event if event && event_type_enabled?(event.event_type)
     end

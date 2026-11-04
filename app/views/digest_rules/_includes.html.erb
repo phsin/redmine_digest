@@ -27,10 +27,9 @@
       rawProjectIds.select2({
         width: "40%",
         multiple: true,
-        data: rawProjectIds.data("options"),
-        matcher: function (term, text, option) {
-          return text.toUpperCase().indexOf(term.toUpperCase()) >= 0;
-        }
+        // The built-in Select2 4 matcher is case-insensitive and searches nested groups;
+        // the old (term, text, option) matcher of Select2 3 broke the dropdown
+        data: rawProjectIds.data("options")
       });
     }
 

@@ -174,14 +174,14 @@ module RedmineDigest
     def get_changed_issue_ids
       ids = Journal.joins(:issue).where('issues.project_id in (?)', project_ids).
         where('journals.created_on >= ? and journals.created_on < ?', time_from, time_to).
-        uniq.pluck(:journalized_id)
+        distinct.pluck(:journalized_id)
       ids
     end
 
     def get_created_issue_ids
       ids = Issue.where('issues.project_id in (?)', project_ids).
         where('issues.created_on >= ? and issues.created_on < ?', time_from, time_to).
-        uniq.pluck(:id)
+        distinct.pluck(:id)
       ids
     end
 

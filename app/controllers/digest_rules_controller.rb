@@ -2,6 +2,7 @@ class DigestRulesController < ApplicationController
 
   PREVIEW_ISSUE_LIMIT = 20
 
+  before_action :require_login
   before_action :set_user_from_params
   before_action :set_digest_rule, only: [:edit, :update, :destroy, :show]
   before_action :set_user_from_digest_rule, only: [:edit, :update, :destroy, :show]
@@ -44,7 +45,8 @@ class DigestRulesController < ApplicationController
   private
 
   def set_user_from_params
-    @user = params[:user_id].present? ? User.find(params[:user_id]) : User.current
+    @user = params[:user_id].present? ? User.find_by(id: params[:user_id]) : User.current
+    deny_access unless @user
   end
 
   def set_digest_rule
